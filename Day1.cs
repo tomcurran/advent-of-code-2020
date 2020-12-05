@@ -4,14 +4,9 @@ using System.Linq;
 
 namespace AdventOfCode2020
 {
-    class Day1
+    static class Day1
     {
-        static void Main(string[] args)
-        {
-            PartTwo();
-        }
-  
-        static void PartOne()
+        public static void Part1()
         {
             var inputs = File.ReadAllLines("day1-input.txt")
                 .Select(int.Parse)
@@ -22,12 +17,12 @@ namespace AdventOfCode2020
                 if (inputs.Contains(find))
                 {
                     Console.WriteLine(input * find);
-                    break;
+                    return;
                 }
             }
         }
 
-        static void PartTwo()
+        public static void Part2()
         {
             var inputs = File.ReadAllLines("day1-input.txt")
                 .Select(int.Parse)
