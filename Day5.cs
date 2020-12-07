@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -8,7 +9,22 @@ namespace AdventOfCode2020
     {
         public static void Part1()
         {
-            var seatIds = File.ReadAllLines("day5-input.txt")
+            var seatIds = GetSeatIds();
+            Console.WriteLine(seatIds.Max());
+        }
+
+        public static void Part2()
+        {
+            var seatIds = GetSeatIds();
+            var mySeatId = Enumerable.Range(seatIds.Min(), seatIds.Max())
+                .Except(seatIds)
+                .Single(seat => seatIds.Contains(seat - 1) && seatIds.Contains(seat + 1));
+            Console.WriteLine(mySeatId);
+        }
+
+        private static IEnumerable<int> GetSeatIds()
+        {
+            return File.ReadAllLines("day5-input.txt")
                 .Select(input =>
                 {
                     var rowStart = 0;
@@ -37,7 +53,6 @@ namespace AdventOfCode2020
 
                     return (rowStart * 8) + columnStart;
                 });
-            Console.WriteLine(seatIds.Max());
         }
     }
 }
