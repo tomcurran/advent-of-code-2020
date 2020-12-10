@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -9,8 +10,32 @@ namespace AdventOfCode2020
         public static void Part1()
         {
             var preamble = 25;
-            var numbers = File.ReadAllLines("day9-input.txt")
-                .Select(input => long.Parse(input));
+            var numbers = File.ReadAllLines("day9-input.txt").Select(input => long.Parse(input));
+            var invalidNumber = GetInvalidNumber(preamble, numbers);
+            Console.WriteLine(invalidNumber);
+        }
+
+        public static void Part2()
+        {
+            var preamble = 25;
+            var numbers = File.ReadAllLines("day9-input.txt").Select(input => long.Parse(input));
+            var invalidNumber = GetInvalidNumber(preamble, numbers);
+            for (var rangeSize = 2; rangeSize < numbers.Count(); rangeSize++)
+            {
+                for (var i = 0; i < numbers.Count(); i++)
+                {
+                    var numberRange = numbers.Skip(i).Take(rangeSize);
+                    if (numberRange.Sum() == invalidNumber)
+                    {
+                        Console.WriteLine(numberRange.Min() + numberRange.Max());
+                        return;
+                    }
+                }
+            }
+        }
+
+        private static long GetInvalidNumber(int preamble, IEnumerable<long> numbers)
+        {
             for (var i = preamble; i < numbers.Count(); i++)
             {
                 var checkNumber = numbers.ElementAt(i);
@@ -21,9 +46,11 @@ namespace AdventOfCode2020
                     .ToHashSet();
                 if (!numberRange.Any(number => numberRange.Contains(checkNumber - number)))
                 {
-                    Console.WriteLine(checkNumber);
+                    return checkNumber;
                 }
             }
+
+            throw new Exception();
         }
     }
 }
