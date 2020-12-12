@@ -35,41 +35,57 @@ namespace AdventOfCode2020
 
         public static void Part2()
         {
-            var numbers = File.ReadAllLines("day10-input-example.txt")
+            var numbers = File.ReadAllLines("day10-input.txt")
                 .Select(input => long.Parse(input))
                 .Prepend(0)
                 .OrderByDescending(x => x);
 
-            Console.WriteLine(Sum(numbers, numbers.Count(), 0));
+            var startIndex = 0;
+            var cache = new Dictionary<long, long>();
+            var paths = GetPaths(numbers, startIndex, cache);
+            Console.WriteLine(paths);
 
-            static long Sum(IOrderedEnumerable<long> numbers, int numbersCount, int index)
+            static long GetPaths(IOrderedEnumerable<long> numbers, int index, Dictionary<long, long> cache)
             {
-                if (index == numbersCount - 1)
+                if (cache.ContainsKey(index))
+                {
+                    return cache[index];
+                }
+
+                if (index == numbers.Count() - 1)
                 {
                     return 1;
                 }
 
-                var sumNumberPlus1 = 0L;
-                var sumNumberPlus2 = 0L;
-                var sumNumberPlus3 = 0L;
-                var currentNumber = numbers.ElementAt(index);
+                var pathsAtPlus1 = 0L;
+                var pathsAtPlus2 = 0L;
+                var pathsAtPlus3 = 0L;
+                var number = numbers.ElementAt(index);
 
-                if (index + 1 < numbersCount && currentNumber - numbers.ElementAt(index + 1) >= 1 && currentNumber - numbers.ElementAt(index + 1) <= 3)
+                if (index + 1 < numbers.Count()
+                    && number - numbers.ElementAt(index + 1) >= 1
+                    && number - numbers.ElementAt(index + 1) <= 3)
                 {
-                    sumNumberPlus1 = Sum(numbers, numbersCount, index + 1);
+                    pathsAtPlus1 = GetPaths(numbers, index + 1, cache);
                 }
 
-                if (index + 2 < numbersCount && currentNumber - numbers.ElementAt(index + 2) >= 1 && currentNumber - numbers.ElementAt(index + 2) <= 3)
+                if (index + 2 < numbers.Count()
+                    && number - numbers.ElementAt(index + 2) >= 1
+                    && number - numbers.ElementAt(index + 2) <= 3)
                 {
-                    sumNumberPlus2 = Sum(numbers, numbersCount, index + 2);
+                    pathsAtPlus2 = GetPaths(numbers, index + 2, cache);
                 }
 
-                if (index + 3 < numbersCount && currentNumber - numbers.ElementAt(index + 3) >= 1 && currentNumber - numbers.ElementAt(index + 3) <= 3)
+                if (index + 3 < numbers.Count()
+                    && number - numbers.ElementAt(index + 3) >= 1
+                    && number - numbers.ElementAt(index + 3) <= 3)
                 {
-                    sumNumberPlus3 = Sum(numbers, numbersCount, index + 3);
+                    pathsAtPlus3 = GetPaths(numbers, index + 3, cache);
                 }
 
-                return sumNumberPlus1 + sumNumberPlus2 + sumNumberPlus3;
+                var paths = pathsAtPlus1 + pathsAtPlus2 + pathsAtPlus3;
+                cache[index] = paths;
+                return paths;
             }
         }
     }
