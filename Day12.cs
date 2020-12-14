@@ -49,5 +49,62 @@ namespace AdventOfCode2020
             var manhattanDistance = Math.Abs(eastWest) + Math.Abs(northSouth);
             Console.WriteLine(manhattanDistance);
         }
+
+        public static void Part2()
+        {
+            var inputs = File.ReadAllText("day12-input.txt");
+            var instructions = new Regex(@"(?<action>.)(?<value>\d+)")
+                .Matches(inputs)
+                .Select(x => (action: x.Groups["action"].Value, value: int.Parse(x.Groups["value"].Value)));
+
+            var shipEastWest = 0;
+            var shipNorthSouth = 0;
+            var waypointEastWest = 10;
+            var waypointNorthSouth = 1;
+
+            foreach (var (action, value) in instructions)
+            {
+                if (action == "N")
+                {
+                    waypointNorthSouth += value;
+                }
+                else if (action == "S")
+                {
+                    waypointNorthSouth -= value;
+                }
+                else if (action == "E")
+                {
+                    waypointEastWest += value;
+                }
+                else if (action == "W")
+                {
+                    waypointEastWest -= value;
+                }
+                else if (action == "F")
+                {
+                    shipNorthSouth += value * waypointNorthSouth;
+                    shipEastWest += value * waypointEastWest;
+                }
+                else if (action == "L")
+                {
+                    var angle = value * (Math.PI / 180);
+                    var x = waypointEastWest;
+                    var y = waypointNorthSouth;
+                    waypointEastWest = (int)Math.Round((x * Math.Cos(angle)) - (y * Math.Sin(angle)));
+                    waypointNorthSouth = (int)Math.Round(x * Math.Sin(angle) + (y * Math.Cos(angle)));
+                }
+                else if (action == "R")
+                {
+                    var angle = value * (Math.PI / 180);
+                    var x = waypointEastWest;
+                    var y = waypointNorthSouth;
+                    waypointEastWest = (int)Math.Round((x * Math.Cos(angle)) + (y * Math.Sin(angle)));
+                    waypointNorthSouth = (int)Math.Round(-x * Math.Sin(angle) + (y * Math.Cos(angle)));
+                }
+            }
+
+            var manhattanDistance = Math.Abs(shipEastWest) + Math.Abs(shipNorthSouth);
+            Console.WriteLine(manhattanDistance);
+        }
     }
 }
