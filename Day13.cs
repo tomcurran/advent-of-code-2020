@@ -37,14 +37,15 @@ namespace AdventOfCode2020
                 .Select((bus, index) => (bus: bus == "x" ? default : int.Parse(bus), delta: index))
                 .Where(bus => bus.bus != default);
 
-            var time = 1L;
+            var firstBus = buses.First().bus;
+            long time = firstBus;
             while (true)
             {
                 if (buses.All(bus => (time + bus.delta) % bus.bus == 0))
                 {
                     break;
                 }
-                time++;
+                time += firstBus;
             }
             Console.WriteLine(time);
         }
