@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2020
 {
@@ -28,6 +27,26 @@ namespace AdventOfCode2020
             }
             var waitingTime = time - startTime;
             Console.WriteLine(waitingTime * bus);
+        }
+
+        public static void Part2()
+        {
+            var buses = File.ReadAllLines("day13-input-example.txt")
+                .ElementAt(1)
+                .Split(",")
+                .Select((bus, index) => (bus: bus == "x" ? default : int.Parse(bus), delta: index))
+                .Where(bus => bus.bus != default);
+
+            var time = 1L;
+            while (true)
+            {
+                if (buses.All(bus => (time + bus.delta) % bus.bus == 0))
+                {
+                    break;
+                }
+                time++;
+            }
+            Console.WriteLine(time);
         }
     }
 }
