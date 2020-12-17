@@ -31,21 +31,27 @@ namespace AdventOfCode2020
 
         public static void Part2()
         {
-            var buses = File.ReadAllLines("day13-input-example.txt")
+            var buses = File.ReadAllLines("day13-input.txt")
                 .ElementAt(1)
                 .Split(",")
                 .Select((bus, index) => (bus: bus == "x" ? default : int.Parse(bus), delta: index))
                 .Where(bus => bus.bus != default);
 
-            var firstBus = buses.First().bus;
-            long time = firstBus;
+            var index = 1;
+            long timeIncrement = buses.ElementAt(0).bus;
+            long time = 0;
             while (true)
             {
-                if (buses.All(bus => (time + bus.delta) % bus.bus == 0))
+                time += timeIncrement;
+                var bus = buses.ElementAt(index);
+                if ((time + bus.delta) % bus.bus == 0)
                 {
-                    break;
+                    timeIncrement *= bus.bus;
+                    if (++index >= buses.Count())
+                    {
+                        break;
+                    }
                 }
-                time += firstBus;
             }
             Console.WriteLine(time);
         }
