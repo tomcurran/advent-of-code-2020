@@ -86,5 +86,59 @@ namespace AdventOfCode2020
             var sumInMemory = memory.Values.Aggregate((x, y) => x + y);
             Console.WriteLine(sumInMemory);
         }
+
+        public static void Part2NotWorking()
+        {
+            var input = File.ReadAllText("day14-input.txt");
+            var regex = new Regex(@"mask = (?<mask>.+)|mem\[(?<address>\d+)\] = (?<value>\d+)");
+
+            var memory = new Dictionary<ulong, ulong>();
+            ulong rulesMask = 0, floatingMask = 0;
+            IEnumerable<ulong> floatingMasks = null;
+
+            foreach (Match match in regex.Matches(input))
+            {
+                if (!string.IsNullOrEmpty(match.Groups["mask"].Value))
+                {
+                    var mask = match.Groups["mask"].Value;
+                    rulesMask = Convert.ToUInt64(mask.Replace('X', '0'), 2);
+                    floatingMask = Convert.ToUInt64(mask.Replace('1', '0').Replace('X', '1'), 2);
+
+                    var floatingRange = mask.Reverse()
+                        .Select((x, index) => x == 'X' ? index : -1)
+                        .Where(index => index != -1)
+                        .Select((x, index) => ((ulong)Math.Pow(2, index), (ulong)(Math.Pow(2, x) - Math.Pow(2, index))));
+
+                    floatingMasks = Enumerable.Range(0, (int)Math.Pow(2, floatingRange.Count()))
+                        .Select(x =>
+                        {
+                            var range = floatingRange.Where(y => (ulong)x >= y.Item1);
+                            if (!range.Any())
+                            {
+                                return (ulong)0;
+                            }
+                            return range.Select(y => y.Item2).Aggregate((x, y) => x + y) + (ulong)x;
+                        })
+                        .Select(x => x & floatingMask);
+                }
+                else
+                {
+                    var address = ulong.Parse(match.Groups["address"].Value);
+                    var value = ulong.Parse(match.Groups["value"].Value);
+
+                    address |= rulesMask;
+                    address &= ~floatingMask;
+                    var memoryAddresses = floatingMasks.Select(x => address | x);
+
+                    foreach (var memoryAddress in memoryAddresses)
+                    {
+                        memory[memoryAddress] = value;
+                    }
+                }
+            }
+
+            var sumInMemory = memory.Values.Aggregate((x, y) => x + y);
+            Console.WriteLine(sumInMemory);
+        }
     }
 }
