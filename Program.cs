@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Day16.Part1();
+            Day16.Part2();
         }
     }
 }
